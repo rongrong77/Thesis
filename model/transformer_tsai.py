@@ -271,7 +271,7 @@ class TransformerTSAI(Module):
         x = x.permute(0,2,1)
         # Input encoding
         device = x.device
-        self.W_pos = self.W_pos.to(device)
+        self.W_pos.data = self.W_pos.data.to(device)
         if self.new_q_len: u = self.W_P(x).transpose(2,1).to(device) # Eq 2        # u: [bs x d_model x q_len] transposed to [bs x q_len x d_model]
         else: u = self.W_P(x.transpose(2,1)).to(device) # Eq 1                     # u: [bs x q_len x nvars] converted to [bs x q_len x d_model]
         # Positional encoding
