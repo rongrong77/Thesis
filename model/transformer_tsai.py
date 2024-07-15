@@ -208,7 +208,6 @@ class TransformerTSAI(Module):
         # Positional encoding
         W_pos = torch.zeros((q_len, d_model), device=default_device())
         self.W_pos = nn.Parameter(W_pos, requires_grad=True)
-        self.W_pos = self.W_pos.to(device)
 
         # Residual dropout
         self.res_dropout = nn.Dropout(res_dropout)
@@ -267,10 +266,10 @@ class TransformerTSAI(Module):
         x = x.permute(0,2,1)
         x = x.float()
         # Input encoding
-        if self.new_q_len: u = self.W_P(x).transpose(2,1) # Eq 2        # u: [bs x d_model x q_len] transposed to [bs x q_len x d_model]
-        else: u = self.W_P(x.transpose(2,1)) # Eq 1                     # u: [bs x q_len x nvars] converted to [bs x q_len x d_model]
+        if self.new_q_len: u = self.W_P(x).transpose(2,1).to(self.device) # Eq 2        # u: [bs x d_model x q_len] transposed to [bs x q_len x d_model]
+        else: u = self.W_P(x.transpose(2,1)).to(self.device) # Eq 1                     # u: [bs x q_len x nvars] converted to [bs x q_len x d_model]
         # Positional encoding
-        u = self.res_dropout(u + self.W_pos)
+        u = self.res_dropout(u + self.W_pos.to(self.device))
         # Encoder
         z = self.encoder(u)                                             # z: [bs x q_len x d_model]
         if self.flatten is not None: z = self.flatten(z)                # z: [bs x q_len * d_model]
