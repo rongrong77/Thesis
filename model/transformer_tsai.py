@@ -19,8 +19,6 @@ from tsai.utils import *
 from tsai.models.layers import *
 from tsai.models.utils import *
 
-import torch
-torch.cuda.is_available()
 
 
 # Internal Cell
@@ -62,6 +60,11 @@ class _MultiHeadAttention(Module):
         self.W_O = nn.Linear(n_heads * d_v, d_model, bias=False)
 
     def forward(self, Q:Tensor, K:Tensor, V:Tensor, mask:Optional[Tensor]=None):
+        device = Q.device
+        self.W_Q = self.W_Q.to(device)
+        self.W_K = self.W_K.to(device)
+        self.W_V = self.W_V.to(device)
+        self.W_O = self.W_O.to(device)
 
         bs = Q.size(0)
 
@@ -108,6 +111,8 @@ class _TSTEncoderLayer(Module):
 
         # Multi-Head attention sublayer
         ## Multi-Head attention
+        device = src.device
+        self.to(device)
         src2, attn = self.self_attn(src, src, src, mask=mask)
         ## Add & Norm
         src = src + self.dropout_attn(src2) # Add: residual connection with residual dropout
@@ -136,8 +141,11 @@ class _TSTEncoder(Module):
                                                             activation=activation) for i in range(n_layers)])
 
     def forward(self, src):
+        device = src.device
         output = src
-        for mod in self.layers: output = mod(output)
+        for mod in self.layers: 
+            mod = mod.to(device)
+            output = mod(output)
         return output
 
 
@@ -180,10 +188,7 @@ class TransformerTSAI(Module):
         Input shape:
             bs (batch size) x nvars (aka features, variables, dimensions, channels) x seq_len (aka time steps)
         """
-        self.float()
         self.c_out, self.seq_len = c_out, seq_len
-
-        self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
         # Input encoding
         q_len = seq_len
@@ -264,12 +269,13 @@ class TransformerTSAI(Module):
 
     def forward(self, x:Tensor, mask:Optional[Tensor]=None) -> Tensor:  # x: [bs x nvars x q_len]
         x = x.permute(0,2,1)
-        x = x.float()
         # Input encoding
-        if self.new_q_len: u = self.W_P(x).transpose(2,1).to(self.device) # Eq 2        # u: [bs x d_model x q_len] transposed to [bs x q_len x d_model]
-        else: u = self.W_P(x.transpose(2,1)).to(self.device) # Eq 1                     # u: [bs x q_len x nvars] converted to [bs x q_len x d_model]
+        device = x.device
+        self.W_pos = self.W_pos.to(device)
+        if self.new_q_len: u = self.W_P(x).transpose(2,1).to(device) # Eq 2        # u: [bs x d_model x q_len] transposed to [bs x q_len x d_model]
+        else: u = self.W_P(x.transpose(2,1)).to(device) # Eq 1                     # u: [bs x q_len x nvars] converted to [bs x q_len x d_model]
         # Positional encoding
-        u = self.res_dropout(u + self.W_pos.to(self.device))
+        u = self.res_dropout(u + self.W_pos)
         # Encoder
         z = self.encoder(u)                                             # z: [bs x q_len x d_model]
         if self.flatten is not None: z = self.flatten(z)                # z: [bs x q_len * d_model]
