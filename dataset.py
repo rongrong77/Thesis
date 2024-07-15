@@ -52,7 +52,7 @@ class DataSet:
 
     def run_segmentation(self, x, y, labels):
         if self.segmentation_method == 'fixedwindow':
-            segmentation_handler = FixWindowSegmentation(x, y, labels, winsize=self.config['target_padding_length'], overlap=0.25)
+            segmentation_handler = FixWindowSegmentation(x, y, labels, winsize=self.config['target_padding_length'], overlap=0.5)
             self.x, self.y, self.labels = segmentation_handler._run_segmentation()
 
         if self.config['opensim_filter']:
