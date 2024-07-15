@@ -19,6 +19,8 @@ from tsai.utils import *
 from tsai.models.layers import *
 from tsai.models.utils import *
 
+import torch
+torch.cuda.is_available()
 
 
 # Internal Cell
@@ -178,6 +180,7 @@ class TransformerTSAI(Module):
         Input shape:
             bs (batch size) x nvars (aka features, variables, dimensions, channels) x seq_len (aka time steps)
         """
+        self.float()
         self.c_out, self.seq_len = c_out, seq_len
 
         # Input encoding
@@ -203,7 +206,8 @@ class TransformerTSAI(Module):
         # Positional encoding
         W_pos = torch.zeros((q_len, d_model), device=default_device())
         self.W_pos = nn.Parameter(W_pos, requires_grad=True)
-
+        self.W_pos = self.W_pos.to(device)
+        
         # Residual dropout
         self.res_dropout = nn.Dropout(res_dropout)
 
@@ -259,6 +263,7 @@ class TransformerTSAI(Module):
 
     def forward(self, x:Tensor, mask:Optional[Tensor]=None) -> Tensor:  # x: [bs x nvars x q_len]
         x = x.permute(0,2,1)
+        x = x.float()
         # Input encoding
         if self.new_q_len: u = self.W_P(x).transpose(2,1) # Eq 2        # u: [bs x d_model x q_len] transposed to [bs x q_len x d_model]
         else: u = self.W_P(x.transpose(2,1)) # Eq 1                     # u: [bs x q_len x nvars] converted to [bs x q_len x d_model]
