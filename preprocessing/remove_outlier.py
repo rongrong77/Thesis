@@ -1,4 +1,5 @@
 import matplotlib.pyplot as plt
+import pandas as pd
 
 def remove_outlier(x, y, labels):
     outlier_index = []
@@ -12,7 +13,7 @@ def remove_outlier(x, y, labels):
         else:
             x_updated.append(x[i])
             y_updated.append(y[i])
-            labels_updated.append(labels[i])
+            labels_updated.append(labels.iloc[i])
 
     # plt.figure()
     # for i in range(len(y)):
@@ -32,4 +33,5 @@ def remove_outlier(x, y, labels):
     #     plt.subplot(3, 3, 1)
     #     plt.plot(y_updated[i][:, 2])
     # plt.show()
+    labels_updated = pd.DataFrame(labels_updated).reset_index(drop=True)
     return x_updated, y_updated, labels_updated

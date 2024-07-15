@@ -4,7 +4,7 @@ import numpy as np
 from utils import filter
 
 class FilterOpenSim:
-    def __init__(self, y, lowcut=6, fs=100, order=2):
+    def __init__(self, y, lowcut=6, fs=200, order=2):
        self.y = y
        self.lowcut=lowcut
        self.fs = fs

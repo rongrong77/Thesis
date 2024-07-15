@@ -2,19 +2,19 @@ from preprocessing.interpolation import InterpolationSignal
 
 
 class Resample:
-    def __init__(self, imu_signal, ik_signal, labels, input_freq, output_freq):
+    def __init__(self, imu_signal, ia_signal, labels, input_freq, output_freq):
         self.imu_signal = imu_signal
-        self.ik_signal = ik_signal
+        self.ia_signal = ia_signal
         self.labels = labels
         self.interpolated_factor = output_freq/input_freq
 
-    def run_ik_resample(self):
-        ik_signals_resampled = []
-        for signal in self.ik_signal:
+    def run_ia_resample(self):
+        ia_signals_resampled = []
+        for signal in self.ia_signal:
             interpolate_handler = InterpolationSignal(int(len(signal)*self.interpolated_factor))
             x = interpolate_handler.interpolate_signal(signal)
-            ik_signals_resampled.append(x)
-        return ik_signals_resampled
+            ia_signals_resampled.append(x)
+        return ia_signals_resampled
 
     def run_imu_resample(self):
         imu_signals_resampled = []
@@ -33,5 +33,5 @@ class Resample:
         return labels_resampled
 
     def _run_resample(self):
-        return self.run_imu_resample(), self.run_ik_resample(), self.run_labels_resample()
+        return self.run_imu_resample(), self.run_ia_resample(), self.run_labels_resample()
 

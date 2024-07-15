@@ -4,7 +4,7 @@ import numpy as np
 from utils import filter
 
 class FilterIMU:
-    def __init__(self, x, lowcut=6, fs=100, order=2):
+    def __init__(self, x, lowcut=6, fs=200, order=2):
        self.x = x
        self.lowcut=lowcut
        self.fs = fs
