@@ -2,7 +2,7 @@
   "dataset_name": "oemal",
   "dataset_path": "./Datasets/",
   "dl_dataset_path": "./Datasets/MiniDataset/",
-  "dl_dataset": "BioMAT_Dataset2.p",
+  "dl_dataset": "BioMAT_Dataset2.pkl",
   "selected_data_status": ["imu"],
   "imu_features": ["Acc_X","Acc_Y", "Acc_Z",
                         "Gyro_X", "Gyro_Y", "Gyro_Z"],
