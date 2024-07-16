@@ -17,7 +17,7 @@
   "data_transformer": {"data_transformer_method": "StandardScaler", "data_transformer_by": "by_var"},
   "target_padding_length": 256,
   "resample": false,
-  "opensim_filter": true,
+  "opensim_filter": false,
   "imu_filter": true,
 
   "load_model": true,
