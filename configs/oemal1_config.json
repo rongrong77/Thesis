@@ -29,9 +29,9 @@
 
   "train_subjects":["Subject01", "Subject02", "Subject03", "Subject04", "Subject04", "Subject05", "Subject06", "Subject07", "Subject08", "Subject09", "Subject10", "Subject11", "Subject12"],
   "model_train_activity": ["g","ra", "rd", "sa", "sd"],
-  "train_activity": ["levelwalking","ra","rd","sa","sd","obstacle"],
+  "train_activity": ["levelwalking","ra","rd","sa","sd"],
   "test_subjects": ["Subject13", "Subject14"],
-  "test_activity":["levelwalking","ra","rd","sa","sd","obstacle"],
+  "test_activity":["levelwalking","ra","rd","sa","sd"],
   "device": "cuda",
   "model_name": "transformer",
   "classification": false,
